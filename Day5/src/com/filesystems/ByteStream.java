@@ -6,10 +6,12 @@ class Student implements Serializable {
 	int id;
 	String name;
 	int salary;
-	public Student(int id, String name, int i) {
+	String designation;
+	public Student(int id, String name, int i, String designation) {
 		this.id = id;
 		this.name = name;
 		this.salary = i;
+		this.designation = designation;
 		
 	}
 
@@ -18,7 +20,7 @@ class Student implements Serializable {
 public class ByteStream {
 	public static void main(String[] args) {
 		try {
-			Student s = new Student(1010, "Anand", 50000);
+			Student s = new Student(1010, "Anand", 50000, "Software Engineer");
 			java.io.FileOutputStream fos = new java.io.FileOutputStream("C:\\Users\\SMK5\\Downloads\\SampleText.txt");
 			java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(fos);
 			oos.writeObject(s);
@@ -39,6 +41,7 @@ public class ByteStream {
 			System.out.println("ID: " + s2.id);
 			System.out.println("Name: " + s2.name);
 			System.out.println("Salary: " + s2.salary);
+			System.out.println("Designation: " + s2.designation);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
