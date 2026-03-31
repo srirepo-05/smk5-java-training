@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * EmployeeService - Contains all the business logic for the Employee Management System.
@@ -90,6 +92,26 @@ public class EmployeeService {
 
         // Step 5: Convert saved entity to response DTO and return
         return convertToResponseDTO(savedEmployee);
+    }
+
+    /**
+     * Retrieves ALL employees from the database.
+     *
+     * Throws NoEmployeesException if the database has no employee records.
+     *
+     * @return List<EmployeeResponseDTO> - list of all employees
+     */
+    public List<EmployeeResponseDTO> getAllEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
+
+        if (employees.isEmpty()) {
+            throw new NoEmployeesException("No employees found! Please create one first.");
+        }
+
+        // Convert each Employee entity to a response DTO
+        return employees.stream()
+            .map(this::convertToResponseDTO)
+            .collect(Collectors.toList());
     }
 
     /**

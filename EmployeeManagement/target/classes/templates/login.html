@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login – Employee Management</title>
+    <style>
+        /* ── Reset & base ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* ── Card ── */
+        .login-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 420px;
+            padding: 48px 40px 40px;
+            text-align: center;
+        }
+
+        /* ── Header ── */
+        .login-card .icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+        .login-card h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+        .login-card .subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+
+        /* ── Alerts ── */
+        .alert {
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.875rem;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .alert-error  { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+        /* ── Form ── */
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #111827;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+        .form-group input:focus {
+            border-color: #0f3460;
+            box-shadow: 0 0 0 3px rgba(15,52,96,.15);
+        }
+
+        /* ── Button ── */
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #0f3460, #533483);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity .2s, transform .1s;
+            margin-top: 6px;
+        }
+        .btn-login:hover  { opacity: .88; }
+        .btn-login:active { transform: scale(.98); }
+
+        /* ── Footer hint ── */
+        .hint {
+            margin-top: 22px;
+            font-size: 0.78rem;
+            color: #9ca3af;
+        }
+        .hint span { font-weight: 600; color: #6b7280; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+
+    <!-- Header -->
+    <div class="icon">🏢</div>
+    <h1>Employee Management</h1>
+    <p class="subtitle">Sign in to access the dashboard</p>
+
+    <!-- Error alert (shown when ?error is in URL) -->
+    <div class="alert alert-error" th:if="${param.error}">
+        ❌ Invalid username or password. Please try again.
+    </div>
+
+    <!-- Success alert (shown after logout) -->
+    <div class="alert alert-success" th:if="${param.logout}">
+        ✅ You have been logged out successfully.
+    </div>
+
+    <!-- Login Form — Spring Security listens on POST /login -->
+    <form th:action="@{/login}" method="post">
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username"
+                   placeholder="Enter your username" required autofocus/>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"
+                   placeholder="Enter your password" required/>
+        </div>
+
+        <button type="submit" class="btn-login">🔐 Sign In</button>
+    </form>
+
+    <p class="hint">Hint: <span>admin</span> / <span>admin123</span></p>
+</div>
+
+</body>
+</html>

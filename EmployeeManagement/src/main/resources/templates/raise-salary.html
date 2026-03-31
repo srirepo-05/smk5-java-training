@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Raise Salary – Employee Management</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            background: #f1f5f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1e293b;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            color: #fff;
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,.3);
+        }
+        .navbar .brand { font-size: 1.25rem; font-weight: 700; }
+        .btn-back {
+            padding: 7px 16px;
+            background: rgba(255,255,255,.15);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,.3);
+            border-radius: 6px;
+            font-size: .85rem;
+            text-decoration: none;
+            transition: background .2s;
+        }
+        .btn-back:hover { background: rgba(255,255,255,.25); }
+
+        /* ── Container ── */
+        .container {
+            max-width: 560px;
+            margin: 48px auto;
+            padding: 0 16px;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.1);
+            padding: 40px 36px;
+        }
+        .card h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f3460;
+            margin-bottom: 6px;
+        }
+        .card .description {
+            font-size: .875rem;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        /* ── Employee info box ── */
+        .employee-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 28px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .employee-info .info-item .label {
+            font-size: .75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .employee-info .info-item .value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e40af;
+        }
+
+        /* ── Alerts ── */
+        .alert {
+            border-radius: 8px;
+            padding: 11px 16px;
+            font-size: .875rem;
+            margin-bottom: 20px;
+        }
+        .alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+        /* ── Form ── */
+        .form-group {
+            margin-bottom: 22px;
+        }
+        .form-group label {
+            display: block;
+            font-size: .875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: .95rem;
+            color: #111827;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .form-group input:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5,150,105,.12);
+        }
+        .form-group .hint {
+            font-size: .78rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        /* ── Live raise preview ── */
+        .raise-preview {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-size: .9rem;
+            color: #15803d;
+            margin-bottom: 24px;
+            display: none;
+            line-height: 1.7;
+        }
+        .raise-preview .new-sal {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* ── Range slider ── */
+        input[type="range"] {
+            width: 100%;
+            accent-color: #059669;
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: .75rem;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        /* ── Buttons ── */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+        }
+        .btn-submit {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #059669, #0d9488);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: .95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity .2s;
+        }
+        .btn-submit:hover { opacity: .85; }
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: .95rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: background .2s;
+        }
+        .btn-cancel:hover { background: #e2e8f0; }
+    </style>
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="navbar">
+    <div class="brand">🏢 Employee Management</div>
+    <a th:href="@{/employees}" class="btn-back">← Back to Employees</a>
+</nav>
+
+<!-- ── Form Card ── -->
+<div class="container">
+    <div class="card">
+        <h2>💰 Raise Employee Salary</h2>
+        <p class="description">
+            Choose a raise percentage between <strong>1%</strong> and <strong>10%</strong>.
+            The new salary will be calculated automatically.
+        </p>
+
+        <!-- Current employee details -->
+        <div class="employee-info" th:if="${employee}">
+            <div class="info-item">
+                <div class="label">Employee</div>
+                <div class="value" th:text="${employee.name}">John Doe</div>
+            </div>
+            <div class="info-item">
+                <div class="label">ID</div>
+                <div class="value" th:text="${employee.id}">1</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Designation</div>
+                <div class="value" th:text="${employee.designation}">Programmer</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Current Salary</div>
+                <div class="value" th:text="'₹' + ${#numbers.formatDecimal(employee.salary, 1, 2)}"
+                     id="currentSalaryDisplay">₹20,000.00</div>
+            </div>
+        </div>
+
+        <!-- Validation error message -->
+        <div class="alert alert-error" th:if="${errorMessage}">
+            ❌ <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Raise Salary Form -->
+        <form th:action="@{/employees/raise/{id}(id=${employee.id})}"
+              th:object="${raiseSalaryRequest}"
+              method="post">
+
+            <!-- Percentage input -->
+            <div class="form-group">
+                <label for="percentage">Raise Percentage: <strong id="pctLabel">5</strong>%</label>
+
+                <!-- Range slider for intuitive input -->
+
+
+                <!-- Hidden number field that gets submitted -->
+                <input type="number" id="percentage" th:field="*{percentage}"
+                       min="1" max="10" required
+                       style="margin-top:10px;"
+                       oninput="syncSlider(this.value)"
+                       placeholder="Enter 1–10"/>
+                <p class="hint">Must be a whole number between 1 and 10</p>
+            </div>
+
+            <!-- Live raise preview -->
+            <div class="raise-preview" id="raisePreview">
+                <div>📊 Raise Amount: <strong id="raiseAmtDisplay">—</strong></div>
+                <div>✅ New Salary: <span class="new-sal" id="newSalDisplay">—</span></div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="btn-row">
+                <button type="submit" class="btn-submit">💰 Apply Raise</button>
+                <a th:href="@{/employees}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    // Get current salary from Thymeleaf model (server-side value)
+    const currentSalary = /*[[${employee != null ? employee.salary : 0}]]*/ 0;
+
+    // Sync slider → number input and vice versa
+    function syncInputs(val) {
+        document.getElementById('percentage').value = val;
+        document.getElementById('pctLabel').textContent = val;
+        updatePreview(val);
+    }
+
+    function syncSlider(val) {
+        document.getElementById('percentageSlider').value = val;
+        document.getElementById('pctLabel').textContent = val;
+        updatePreview(val);
+    }
+
+    // Show a live salary raise preview
+    function updatePreview(pct) {
+        const preview    = document.getElementById('raisePreview');
+        const raiseAmt   = document.getElementById('raiseAmtDisplay');
+        const newSalDisp = document.getElementById('newSalDisplay');
+
+        const p = parseFloat(pct);
+        if (!isNaN(p) && p >= 1 && p <= 10 && currentSalary > 0) {
+            const raise  = currentSalary * p / 100;
+            const newSal = currentSalary + raise;
+            raiseAmt.textContent = '₹' + raise.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            newSalDisp.textContent = '₹' + newSal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+
+    // Initialise preview with default slider value
+    window.onload = function () {
+        const defaultPct = document.getElementById('percentageSlider').value;
+        document.getElementById('percentage').value = defaultPct;
+        document.getElementById('pctLabel').textContent = defaultPct;
+        updatePreview(defaultPct);
+    };
+</script>
+
+</body>
+</html>

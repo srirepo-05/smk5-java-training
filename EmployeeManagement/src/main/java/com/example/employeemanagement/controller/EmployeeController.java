@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +28,33 @@ public class EmployeeController {
     // Injecting the service layer
     @Autowired
     private EmployeeService employeeService;
+
+    /**
+     * GET /api/employees/all
+     *
+     * Returns all employees from the database.
+     * This endpoint is protected — requires authentication (admin / admin123).
+     *
+     * Success Response (200 OK) - list of all employees:
+     * [
+     *   { "id": 1, "name": "John Doe", "age": 25, "designation": "Programmer", "salary": 20000.0 },
+     *   { "id": 2, "name": "Jane Smith", "age": 30, "designation": "Manager",    "salary": 25000.0 }
+     * ]
+     *
+     * Error Response (404 Not Found) - when no employees exist:
+     * {
+     *   "status": 404,
+     *   "error": "Not Found",
+     *   "message": "No employees found! Please create one first."
+     * }
+     *
+     * @return ResponseEntity containing a list of all employees
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<EmployeeResponseDTO>> getAllEmployees() {
+        List<EmployeeResponseDTO> employees = employeeService.getAllEmployees();
+        return new ResponseEntity<>(employees, HttpStatus.OK);
+    }
 
     /**
      * POST /api/employees/create
